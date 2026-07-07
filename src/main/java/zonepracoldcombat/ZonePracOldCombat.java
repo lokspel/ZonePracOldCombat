@@ -28,6 +28,7 @@ public final class ZonePracOldCombat extends JavaPlugin {
         OldCombatMechanicsAPI ocmApi = registration.getProvider();
 
         saveDefaultConfig();
+        saveResource("example-ocm-config.yml", false);
 
         ConfigManager configManager = new ConfigManager(this);
         configManager.load();
