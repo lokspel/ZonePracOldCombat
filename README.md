@@ -57,7 +57,6 @@ modules:
 
 ## » Compatibility
 
-- Spigot / Paper 1.20.6 — 1.21
-- Java 9+
+- Compatible with any Minecraft version supported by both **ZonePractice Pro** and **OldCombatMechanics**.
 
 Enjoy ZonePracOldCombat!
