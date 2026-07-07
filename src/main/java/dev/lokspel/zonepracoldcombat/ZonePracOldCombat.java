@@ -1,5 +1,6 @@
 package dev.lokspel.zonepracoldcombat;
 
+import dev.lokspel.zonepracoldcombat.util.LadderResolver;
 import dev.nandi0813.api.ZonePracticeApi;
 import kernitus.plugin.OldCombatMechanics.api.OldCombatMechanicsAPI;
 import org.bukkit.Bukkit;
@@ -33,8 +34,7 @@ public final class ZonePracOldCombat extends JavaPlugin {
         ConfigManager configManager = new ConfigManager(this);
         configManager.load();
 
-        Bukkit.getPluginManager().registerEvents(new MatchListener(ocmApi, configManager, getLogger()), this);
-
+        Bukkit.getPluginManager().registerEvents(new MatchListener(ocmApi, configManager, new LadderResolver(), getLogger()), this);
         getLogger().info("ZonePracOldCombat enabled.");
     }
 }

@@ -24,13 +24,16 @@ public final class MatchListener implements Listener {
     private final LadderResolver ladderResolver;
     private final Logger logger;
 
-    public MatchListener(OldCombatMechanicsAPI ocmApi,
-                         ConfigManager configManager,
-                         Logger logger) {
+    public MatchListener(
+            OldCombatMechanicsAPI ocmApi,
+            ConfigManager configManager,
+            LadderResolver ladderResolver,
+            Logger logger
+    ) {
         this.ocmApi = ocmApi;
         this.configManager = configManager;
+        this.ladderResolver = ladderResolver;
         this.logger = logger;
-        this.ladderResolver = new LadderResolver();
     }
 
     @EventHandler
@@ -45,17 +48,21 @@ public final class MatchListener implements Listener {
 
     @EventHandler
     public void onMatchEnd(MatchEndEvent event) {
-        event.getMatch().getPlayers().forEach(ocmApi::clearAllModuleOverridesForPlayer);
+        event.getMatch().getPlayers()
+                .forEach(ocmApi::clearAllModuleOverridesForPlayer);
     }
 
     private void applyMode(Match match) {
-        if (match.getPlayers().isEmpty()) {
+        List<Player> players = match.getPlayers();
+
+        if (players.isEmpty()) {
             return;
         }
 
         String ladder = ladderResolver.resolve(match);
         if (ladder == null) {
-            logger.warning("Could not resolve ladder for " + match.getClass().getName());
+            logger.warning(() ->
+                    "Could not resolve ladder for " + match.getClass().getName());
             return;
         }
 
@@ -66,26 +73,29 @@ public final class MatchListener implements Listener {
 
         List<String> modules = configManager.getModeModules(mode);
         if (modules == null) {
-            logger.warning("Unknown mode '" + mode + "' for ladder '" + ladder + "'");
+            logger.warning(() ->
+                    "Unknown mode '" + mode + "' for ladder '" + ladder + "'");
             return;
         }
 
-        for (Player player : match.getPlayers()) {
-            if (modules.isEmpty()) {
-                ocmApi.clearAllModuleOverridesForPlayer(player);
-            } else {
-                enableModules(player, modules);
-            }
+        if (modules.isEmpty()) {
+            players.forEach(ocmApi::clearAllModuleOverridesForPlayer);
+            return;
         }
+
+        Map<String, PlayerModuleOverride> overrides = createOverrides(modules);
+
+        players.forEach(player ->
+                ocmApi.setModuleOverridesForPlayer(player, overrides));
     }
 
-    private void enableModules(Player player, List<String> modules) {
+    private Map<String, PlayerModuleOverride> createOverrides(List<String> modules) {
         Map<String, PlayerModuleOverride> overrides = new HashMap<>(modules.size());
 
         for (String module : modules) {
             overrides.put(module, PlayerModuleOverride.FORCE_ENABLED);
         }
 
-        ocmApi.setModuleOverridesForPlayer(player, overrides);
+        return overrides;
     }
 }
