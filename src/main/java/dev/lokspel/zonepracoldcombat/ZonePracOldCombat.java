@@ -1,12 +1,12 @@
-package zonepracoldcombat;
+package dev.lokspel.zonepracoldcombat;
 
 import dev.nandi0813.api.ZonePracticeApi;
 import kernitus.plugin.OldCombatMechanics.api.OldCombatMechanicsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import zonepracoldcombat.config.ConfigManager;
-import zonepracoldcombat.listener.MatchListener;
+import dev.lokspel.zonepracoldcombat.config.ConfigManager;
+import dev.lokspel.zonepracoldcombat.listener.MatchListener;
 
 public final class ZonePracOldCombat extends JavaPlugin {
 

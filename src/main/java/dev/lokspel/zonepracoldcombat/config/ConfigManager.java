@@ -1,4 +1,4 @@
-package zonepracoldcombat.config;
+package dev.lokspel.zonepracoldcombat.config;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;

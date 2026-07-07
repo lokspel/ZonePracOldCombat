@@ -1,4 +1,4 @@
-package zonepracoldcombat.listener;
+package dev.lokspel.zonepracoldcombat.listener;
 
 import dev.nandi0813.api.Event.Match.MatchEndEvent;
 import dev.nandi0813.api.Event.Match.MatchRoundStartEvent;
@@ -9,8 +9,8 @@ import kernitus.plugin.OldCombatMechanics.api.PlayerModuleOverride;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import zonepracoldcombat.config.ConfigManager;
-import zonepracoldcombat.util.LadderResolver;
+import dev.lokspel.zonepracoldcombat.config.ConfigManager;
+import dev.lokspel.zonepracoldcombat.util.LadderResolver;
 
 import java.util.*;
 import java.util.logging.Logger;

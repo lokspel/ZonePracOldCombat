@@ -1,4 +1,4 @@
-package zonepracoldcombat.util;
+package dev.lokspel.zonepracoldcombat.util;
 
 import java.lang.reflect.Method;
 import java.util.List;
