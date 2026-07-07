@@ -1,0 +1,5 @@
+name: ZonePracOldCombat
+version: ${project.version}
+main: zonepracoldcombat.ZonePracOldCombat
+api-version: 1.13
+depend: [ZonePracticePro, OldCombatMechanics]

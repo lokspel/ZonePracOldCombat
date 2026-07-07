@@ -1,0 +1,34 @@
+ladder-modes:
+  BedWars: old
+  SkyWars: old
+  Bridges: old
+  MLGRush: old
+  TNTSumo: old
+  BattleRush: old
+  Boxing: old
+  BuildUHC: old
+  Debuff: old
+  Nodebuff: old
+  PearlFight: old
+  Soup: old
+  Sumo: old
+  SG: old
+  Fireball: old
+  GApple: old
+  Spleef: old
+
+modules:
+  old:
+    - "disable-attack-cooldown"
+    - "disable-sword-sweep"
+    - "old-tool-damage"
+    - "sword-blocking"
+    - "shield-damage-reduction"
+    - "old-golden-apples"
+    - "old-player-knockback"
+    - "old-player-regen"
+    - "old-armour-strength"
+    - "old-potion-effects"
+    - "old-critical-hits"
+    - "disable-attack-sounds"
+  new: []
