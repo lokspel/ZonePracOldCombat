@@ -8,37 +8,39 @@ import dev.nandi0813.api.Event.Match.MatchStartEvent;
 import dev.nandi0813.api.Interface.Match;
 import kernitus.plugin.OldCombatMechanics.api.OldCombatMechanicsAPI;
 import kernitus.plugin.OldCombatMechanics.api.PlayerModuleOverride;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public final class MatchListener implements Listener {
 
     private final OldCombatMechanicsAPI ocmApi;
     private final ConfigManager configManager;
     private final LadderResolver ladderResolver;
-    private final Logger logger;
+    private final JavaPlugin plugin;
 
     public MatchListener(
             OldCombatMechanicsAPI ocmApi,
             ConfigManager configManager,
             LadderResolver ladderResolver,
-            Logger logger
+            JavaPlugin plugin
     ) {
         this.ocmApi = ocmApi;
         this.configManager = configManager;
         this.ladderResolver = ladderResolver;
-        this.logger = logger;
+        this.plugin = plugin;
     }
 
     @EventHandler
     public void onMatchStart(MatchStartEvent event) {
-        applyMode(event.getMatch());
+        Match match = event.getMatch();
+        Bukkit.getScheduler().runTaskLater(plugin, () -> applyMode(match), 1L);
     }
 
     @EventHandler
@@ -61,7 +63,7 @@ public final class MatchListener implements Listener {
 
         String ladder = ladderResolver.resolve(match);
         if (ladder == null) {
-            logger.warning(() ->
+            plugin.getLogger().warning(() ->
                     "Could not resolve ladder for " + match.getClass().getName());
             return;
         }
@@ -73,7 +75,7 @@ public final class MatchListener implements Listener {
 
         List<String> modules = configManager.getModeModules(mode);
         if (modules == null) {
-            logger.warning(() ->
+            plugin.getLogger().warning(() ->
                     "Unknown mode '" + mode + "' for ladder '" + ladder + "'");
             return;
         }
@@ -83,10 +85,8 @@ public final class MatchListener implements Listener {
             return;
         }
 
-        Map<String, PlayerModuleOverride> overrides = createOverrides(modules);
-
         players.forEach(player ->
-                ocmApi.setModuleOverridesForPlayer(player, overrides));
+                ocmApi.setModuleOverridesForPlayer(player, createOverrides(modules)));
     }
 
     private Map<String, PlayerModuleOverride> createOverrides(List<String> modules) {

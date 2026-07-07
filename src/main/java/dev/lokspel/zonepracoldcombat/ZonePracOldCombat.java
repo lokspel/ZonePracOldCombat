@@ -1,13 +1,15 @@
 package dev.lokspel.zonepracoldcombat;
 
+import dev.lokspel.zonepracoldcombat.config.ConfigManager;
+import dev.lokspel.zonepracoldcombat.listener.MatchListener;
 import dev.lokspel.zonepracoldcombat.util.LadderResolver;
 import dev.nandi0813.api.ZonePracticeApi;
 import kernitus.plugin.OldCombatMechanics.api.OldCombatMechanicsAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
-import dev.lokspel.zonepracoldcombat.config.ConfigManager;
-import dev.lokspel.zonepracoldcombat.listener.MatchListener;
+
+import java.io.File;
 
 public final class ZonePracOldCombat extends JavaPlugin {
 
@@ -29,12 +31,16 @@ public final class ZonePracOldCombat extends JavaPlugin {
         OldCombatMechanicsAPI ocmApi = registration.getProvider();
 
         saveDefaultConfig();
-        saveResource("example-ocm-config.yml", false);
+
+        File exampleConfig = new File(getDataFolder(), "example-ocm-config.yml");
+        if (!exampleConfig.exists()) {
+            saveResource("example-ocm-config.yml", false);
+        }
 
         ConfigManager configManager = new ConfigManager(this);
         configManager.load();
 
-        Bukkit.getPluginManager().registerEvents(new MatchListener(ocmApi, configManager, new LadderResolver(), getLogger()), this);
+        Bukkit.getPluginManager().registerEvents(new MatchListener(ocmApi, configManager, new LadderResolver(), this), this);
         getLogger().info("ZonePracOldCombat enabled.");
     }
 }
