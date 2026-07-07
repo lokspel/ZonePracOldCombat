@@ -6,12 +6,14 @@ import dev.nandi0813.api.Event.Match.MatchEndEvent;
 import dev.nandi0813.api.Event.Match.MatchRoundStartEvent;
 import dev.nandi0813.api.Event.Match.MatchStartEvent;
 import dev.nandi0813.api.Interface.Match;
+import dev.nandi0813.practice.manager.fight.match.MatchManager;
 import kernitus.plugin.OldCombatMechanics.api.OldCombatMechanicsAPI;
 import kernitus.plugin.OldCombatMechanics.api.PlayerModuleOverride;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
@@ -54,6 +56,21 @@ public final class MatchListener implements Listener {
                 .forEach(ocmApi::clearAllModuleOverridesForPlayer);
     }
 
+    @EventHandler
+    public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent event) {
+        if (!event.getMessage().equalsIgnoreCase("/leave")) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (MatchManager.getInstance().getLiveMatchByPlayer(player) == null) {
+                ocmApi.clearAllModuleOverridesForPlayer(player);
+            }
+        }, 1L);
+    }
+
     private void applyMode(Match match) {
         List<Player> players = match.getPlayers();
 
@@ -61,10 +78,10 @@ public final class MatchListener implements Listener {
             return;
         }
 
+        players.forEach(ocmApi::clearAllModuleOverridesForPlayer);
+
         String ladder = ladderResolver.resolve(match);
         if (ladder == null) {
-            plugin.getLogger().warning(() ->
-                    "Could not resolve ladder for " + match.getClass().getName());
             return;
         }
 
@@ -75,13 +92,10 @@ public final class MatchListener implements Listener {
 
         List<String> modules = configManager.getModeModules(mode);
         if (modules == null) {
-            plugin.getLogger().warning(() ->
-                    "Unknown mode '" + mode + "' for ladder '" + ladder + "'");
             return;
         }
 
         if (modules.isEmpty()) {
-            players.forEach(ocmApi::clearAllModuleOverridesForPlayer);
             return;
         }
 
