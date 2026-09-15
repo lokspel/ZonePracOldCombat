@@ -20,7 +20,7 @@ This addon bridges ZonePractice Pro and OldCombatMechanics. Maps arena ladders t
 
 ## » Configuration
 
-**config.yml**
+### `config.yml`
 
 ```yaml
 # Which ladders use which mode
@@ -60,4 +60,3 @@ modules:
 - Compatible with any Minecraft version supported by both **ZonePractice Pro** and **OldCombatMechanics**.
 
 Enjoy ZonePracOldCombat!
-
