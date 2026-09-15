@@ -1,72 +1,63 @@
-# DeathSwap
+# ZonePracOldCombat
 
-Last-player-standing minigame with timed position swaps between alive players.
+1.8 PvP mode enforcement for [ZonePractice Pro](https://modrinth.com/plugin/zonepractice-pro) via [OldCombatMechanics](https://github.com/kernitus/BukkitOldCombatMechanics/releases)
 
 ## » About
 
-Players join a lobby and are sent into a fresh temporary world when the match starts. At regular intervals, their positions are swapped with random alive opponents. Players must survive until they are the last one standing.
-
-## » Features
-
-- Auto-start lobby with configurable player requirements
-- Timed position swaps with warning countdowns
-- Configurable lives and death tracking
-- Last-player-standing win condition
-- Optional match time limit with winner-by-fewest-deaths
-- Tie messaging when players have the same death count
-- Toggleable sidebar scoreboard and HUD countdowns
-- Match-scoped chat, death, and advancement messages
-- Optional in-match tab-list hiding with PacketEvents
-- Configurable PvP and sounds
-- Fresh temporary world for every match
-- Automatic world deletion after the match
-- Optional per-match nether and end dimensions
-- Per-world random respawn radius around spawn
-
-## » Commands
-
-| Command | Aliases | Description | Permission |
-| --- | --- | --- | --- |
-| `/deathswap join` | `/ds join` | Join the lobby | — |
-| `/deathswap leave` | `/ds leave` | Leave the lobby or match | — |
-| `/deathswap start` | `/ds start` | Force-start the game | `deathswap.start` |
-| `/deathswap stop` | `/ds stop` | Stop the game | `deathswap.stop` |
-| `/deathswap setlobby` | `/ds setlobby` | Set the lobby location | `deathswap.setlobby` |
-| `/deathswap reload` | `/ds reload` | Reload config and messages | `deathswap.reload` |
-
-## » Placeholders
-
-Requires [PlaceholderAPI](https://placeholderapi.com).
-
-The expansion is available under both `deathswap` and `ds`.
-
-| Placeholder | Description |
-| --- | --- |
-| `%deathswap_state%` | Player's current state: `none`, `lobby`, `match`, or `spectator` |
-| `%deathswap_deaths%` | Current death count (`0` outside a match) |
-| `%deathswap_deaths_left%` | Deaths remaining before elimination |
-| `%deathswap_max_deaths%` | Configured maximum deaths |
-| `%deathswap_players_in_lobby%` | Players currently waiting in the lobby |
-| `%deathswap_min_players%` | Minimum players required to start |
-| `%deathswap_swap_interval%` | Configured swap interval in seconds |
-| `%deathswap_next_swap%` | Seconds until the next swap |
+This addon bridges ZonePractice Pro and OldCombatMechanics. Maps arena ladders to OCM combat modes (`old` / `new`) and applies module overrides per-player at match start. No world restriction headaches, no manual `/ocm mode` commands — players get the right combat mode automatically.
 
 ## » Dependencies
 
-- Optional: [PacketEvents](https://github.com/retrooper/packetevents) for match player tab-list hiding
-- Optional: [PlaceholderAPI](https://placeholderapi.com) for placeholders
+- **ZonePractice Pro** — required
+- **OldCombatMechanics** — required
 
-## » Tab List Hiding
+## » Installation
 
-When `hide.match-players-in-tab` is enabled and PacketEvents is installed, players outside a match cannot see its participants in the tab list.
+1. Install ZonePractice Pro and OldCombatMechanics
+2. Drop `ZonePracOldCombat.jar` into your `plugins/` folder
+3. Restart the server
+4. Edit `plugins/ZonePracOldCombat/config.yml` to map ladders to modes
 
-Each match only displays its own participants, while lobby players remain separate from active matches.
+## » Configuration
 
-Match visibility also scopes chat, death, and advancement messages between concurrent matches.
+**config.yml**
 
-> **Note:** Advancement message isolation requires Paper and is unavailable on Spigot.
+```yaml
+# Which ladders use which mode
+ladder-modes:
+  Nodebuff: old
+  BuildUHC: old
+  # ...
 
-## » Build
+# Modules to enable for each mode (must match OCM module names)
+modules:
+  old:
+    - "disable-attack-cooldown"
+    - "disable-sword-sweep"
+    - "old-tool-damage"
+    - "sword-blocking"
+    - "shield-damage-reduction"
+    - "old-golden-apples"
+    - "old-player-knockback"
+    - "old-player-regen"
+    - "old-armour-strength"
+    - "old-potion-effects"
+    - "old-critical-hits"
+    - "disable-attack-sounds"
+  new: []
+```
 
-```bash
-mvn clean package
+## » How it works
+
+- Listens to `MatchStartEvent` and `MatchRoundStartEvent`
+- Resolves the ladder name from the match at runtime
+- Looks up the configured mode (`old` / `new`) for that ladder
+- Applies `setModuleOverridesForPlayer()` with `FORCE_ENABLED` on every module listed under that mode — bypasses OCM world-based modeset restrictions
+- Clears all overrides on `MatchEndEvent`
+
+## » Compatibility
+
+- Compatible with any Minecraft version supported by both **ZonePractice Pro** and **OldCombatMechanics**.
+
+Enjoy ZonePracOldCombat!
+
